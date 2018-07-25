@@ -21,7 +21,6 @@ function componentToHex(c) {
     var hex = c.toString(16);
     return hex.length == 1 ? "0" + hex : hex;
 }
-
 function rgbToHex(r, g, b) {
     return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
 }
@@ -55,32 +54,38 @@ console.log(hexToRgb("#0033ff")); //{r: 0, g: 51, b: 255}
 ```javascript
 // r,g,b范围为[0,255],转换成h范围为[0,360]
 // s,l为百分比形式，范围是[0,100],可根据需求做相应调整
-function rgbtoHsl(r,g,b){
-	r=r/255;
-	g=g/255;
-	b=b/255;
-	var min=Math.min(r,g,b);
-	var max=Math.max(r,g,b);
-	var l=(min+max)/2;
-	var difference = max-min;
-	var h,s,l;
-	if(max==min){
-		h=0;
-		s=0;
-	}else{
-		s=l>0.5?difference/(2.0-max-min):difference/(max+min);
-		switch(max){
-			case r: h=(g-b)/difference+(g < b ? 6 : 0);break;
-			case g: h=2.0+(b-r)/difference;break;
-			case b: h=4.0+(r-g)/difference;break;
-		}
-		h=Math.round(h*60);
-	}
-	s=Math.round(s*100);//转换成百分比的形式
-	l=Math.round(l*100);
-	return [h,s,l];
+function rgbtoHsl(r, g, b) {
+    r = r / 255;
+    g = g / 255;
+    b = b / 255;
+    var min = Math.min(r, g, b);
+    var max = Math.max(r, g, b);
+    var l = (min + max) / 2;
+    var difference = max - min;
+    var h, s, l;
+    if (max == min) {
+        h = 0;
+        s = 0;
+    } else {
+        s = l > 0.5 ? difference / (2.0 - max - min) : difference / (max + min);
+        switch (max) {
+            case r:
+                h = (g - b) / difference + (g < b ? 6 : 0);
+                break;
+            case g:
+                h = 2.0 + (b - r) / difference;
+                break;
+            case b:
+                h = 4.0 + (r - g) / difference;
+                break;
+        }
+        h = Math.round(h * 60);
+    }
+    s = Math.round(s * 100); //转换成百分比的形式
+    l = Math.round(l * 100);
+    return { h: h, s: s, l: l };
 }
-console.log(rgbtohsl(2,5,10));	//[218, 67, 2]
+console.log(rgbtoHsl(2, 5, 10)); //{h: 218, s: 67, l: 2}
 ```
 
 #### HSL to RGB
@@ -88,47 +93,47 @@ console.log(rgbtohsl(2,5,10));	//[218, 67, 2]
 ```javascript
 //输入的h范围为[0,360],s,l为百分比形式的数值,范围是[0,100] 
 //输出r,g,b范围为[0,255],可根据需求做相应调整
-function hsltoRgb(h,s,l){
-	var h=h/360;
-	var s=s/100;
-	var l=l/100;
-	var rgb=[];
-	if(s==0){
-		rgb=[Math.round(l*255),Math.round(l*255),Math.round(l*255)];
-	}else{
-		var q=l>=0.5?(l+s-l*s):(l*(1+s));
-		var p=2*l-q;
-		var tr=rgb[0]=h+1/3;
-		var tg=rgb[1]=h;
-		var tb=rgb[2]=h-1/3;
-		for(var i=0; i<rgb.length;i++){
-			var tc=rgb[i];
-			console.log(tc);
-			if(tc<0){
-				tc=tc+1;
-			}else if(tc>1){
-				tc=tc-1;
-			}
-			switch(true){
-				case (tc<(1/6)):
-					tc=p+(q-p)*6*tc;
-					break;
-				case ((1/6)<=tc && tc<0.5):
-					tc=q;
-					break;
-				case (0.5<=tc && tc<(2/3)):
-					tc=p+(q-p)*(4-6*tc);
-					break;
-				default:
-					tc=p;
-					break;
-			}
-			rgb[i]=Math.round(tc*255);
-		}
-	}
-	return rgb;
+function hsltoRgb(h, s, l) {
+    var h = h / 360;
+    var s = s / 100;
+    var l = l / 100;
+    var rgb = [];
+    if (s == 0) {
+        rgb = [Math.round(l * 255), Math.round(l * 255), Math.round(l * 255)];
+    } else {
+        var q = l >= 0.5 ? (l + s - l * s) : (l * (1 + s));
+        var p = 2 * l - q;
+        var tr = rgb[0] = h + 1 / 3;
+        var tg = rgb[1] = h;
+        var tb = rgb[2] = h - 1 / 3;
+        for (var i = 0; i < rgb.length; i++) {
+            var tc = rgb[i];
+            console.log(tc);
+            if (tc < 0) {
+                tc = tc + 1;
+            } else if (tc > 1) {
+                tc = tc - 1;
+            }
+            switch (true) {
+                case (tc < (1 / 6)):
+                    tc = p + (q - p) * 6 * tc;
+                    break;
+                case ((1 / 6) <= tc && tc < 0.5):
+                    tc = q;
+                    break;
+                case (0.5 <= tc && tc < (2 / 3)):
+                    tc = p + (q - p) * (4 - 6 * tc);
+                    break;
+                default:
+                    tc = p;
+                    break;
+            }
+            rgb[i] = Math.round(tc * 255);
+        }
+    }
+    return { r: rgb[0], g: rgb[1], b: rgb[2] };
 }
-console.log(hsltoRgb(90,20,30));	//[77, 92, 61]
+console.log(hsltoRgb(90, 20, 30)); //{r: 77, g: 92, b: 61}
 ```
 
 
